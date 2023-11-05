@@ -1,4 +1,4 @@
-# WassOS
+# THVAE
 
 ## Introduction
 
