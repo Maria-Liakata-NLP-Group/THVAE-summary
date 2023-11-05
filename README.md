@@ -9,7 +9,7 @@ We developed THVAE, an unsupervised timline summarization model based on hierarc
 Our code is based on the framework of [Copycat](https://arxiv.org/abs/1911.02247), please follow this [link](https://github.com/abrazinskas/Copycat-abstractive-opinion-summarizer) to build the conda environment.
 
 ## Installation
-The main model is in [file](https://github.com/Maria-Liakata-NLP-Group/THVAE-summary/blob/main/copycat/modelling/thvae.py), it show the process how to use hierarchical VAE to get the latent code of each segment of a timeline.
+The main model is in [file](https://github.com/Maria-Liakata-NLP-Group/THVAE-summary/blob/main/copycat/modelling/thvae.py), it shows the process of how to use hierarchical VAE to get the latent code of each segment of a timeline.
 [file](https://github.com/Maria-Liakata-NLP-Group/THVAE-summary/blob/main/copycat/modelling/interfaces/ithvae.py) has the mehod of how to construct the summary representation using key phrases, the method is 'predict'
 
 ## Data
