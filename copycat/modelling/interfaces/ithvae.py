@@ -50,65 +50,11 @@ class ICopyCat(ITorchModel):
 
         with T.no_grad():
 
-            # # bart decoder
-            # z_output, _ = self.model.get_final_output(rev=revs)
-            # z_decoder = z_output.last_hidden_state
-            # z_latent = z_output.encoder_last_hidden_state
-            # # DECODING OF SUMMARIES #
-            # summary_latent = z_latent[summ_rev_indxs]
-            # bs = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_z = summary_latent.view(bs, group_size * seq_len, -1)
-            # summary = self.model.get_final_output(input_emb=summary_z, summary=True)
-            #
-            # _, rev_id = self.translate_sentence(z_latent)
-            # _, summary_id = self.translate_sentence(summary)
-
-            # rev_batch = revs.size(0)
-            # diff_len = revs.size(1) - prompt.size(1)
-            # diff_tensor = T.ones(size=(rev_batch, diff_len), dtype=T.int64).to(self.device)
-            # prompt_c = T.cat((prompt, diff_tensor), dim=-1)
-            # prompt_c = prompt_c.to(self.device)
-
-
-
-
             # normal decoder
             rev_embds = self.model._embds(revs)
             pro_embds = self.model._embds(prompt)
-            # pro_c_embds = self.model._embds(prompt_c)
-
-
-
-            # z_output, _, first_rev_hiddens = self.model.get_final_output(rev=revs)
-            #
-            # rev_hiddens = z_output.encoder_last_hidden_state
-            # # first_rev_hiddens = z_output.encoder_hidden_states[4]
-            #
-            # att_keys = self.model.create_att_keys(first_rev_hiddens)
-            # summ_att_word_ids = revs[summ_rev_indxs].view(summs_nr, -1)
-            #
-            # summary_latent = rev_hiddens[summ_rev_indxs]
-            # bs_summary = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_z = summary_latent.view(bs_summary, group_size * seq_len, -1)
-            # summary = self.model.get_final_output(input_emb=summary_z, summary=True)
-            #
-            # # final_rev_len = T.ones(summary.size()[0])
-            # # final_rev_len = final_rev_len * summary.size()[1]
-            # # summary, _ = self.model.enc_summary(summary, final_rev_len)
-            # summary = T.transpose(summary, 2, 1)
-            # summary = self.model.AvgPool(summary)
-            # summary = summary.squeeze(-1)
-
-            # out_put = self.model.bart_model.model.encoder(input_ids=revs)
-            # rev_hiddens = out_put.last_hidden_state
 
             rev_encs, rev_hiddens = self.model.encode(rev_embds, rev_lens)
-            # this encode is transformer encode
-            # rev_hiddens = self.model.encode(rev_embds, revs_mask)
 
             pro_encs, pro_hiddens = self.model.enc_summary(pro_embds, prompt_lens)
             # _, pro_attn = self.model.encode(pro_c_embds, rev_lens)
@@ -116,36 +62,7 @@ class ICopyCat(ITorchModel):
 
             rev_code = T.transpose(rev_hiddens, 2, 1)
             z_hiddens, _, _, _, _, collect_z = self.model.get_z(rev_code)
-            # z, _ = self.model.z_atten(z)
-            # z_latent = z.unsqueeze(1)
-            # summary_latent = z[summ_rev_indxs]
-            # bs_summary = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_z = summary_latent.reshape(bs_summary, group_size * seq_len, -1)
-            # summary_z = T.transpose(summary_z, 2, 1)
-            # summary, _, _, _, _, collect_z = self.model.get_z(summary_z)
-
-            # summary_latent = rev_encs[summ_rev_indxs]
-            # summary_latent = pro_encs[summ_rev_indxs]
-            # print(summary_latent.size(), 'size-=-=-=-=-=-=-=-')
-            # summary_z = T.transpose(summary_latent, 2, 1)
-
-            # summary_latent = pro_encs[summ_rev_indxs]
-            # bs_summary = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_latent = summary_latent.reshape(bs_summary, group_size * seq_len, -1)
-
-            # decode_output = self.model.bart_model.model.decoder(inputs_embeds=summary)
-            # bart_hidden = decode_output.last_hidden_state
-            # _, summary_id = self.translate_sentence_beamsearch(bart_hidden)
-
-            # summary, _ = self.model.z_atten(summary)
-
-            # summary = T.transpose(summary, 2, 1)
-            # summary = self.model.AvgPool(summary)
-            # summary = summary.squeeze(-1)
+           
 
             ###################################################################### strategy 2:#############################
 
@@ -222,48 +139,11 @@ class ICopyCat(ITorchModel):
                                          att_word_ids=summ_att_word_ids,
                                          minimum=1, **kwargs)
 
-            # summary_id = list()
-            # for i in range(summary_latent.size()[0]):
-            #     summary_id.append(list())
-            #
-            # for i in range(summary_latent.size()[1]):
-            #
-            #     # summary, _ = self.model.z_atten(sub_z)
-            #     sub_summary = summary_latent[:, i, :]
-            #     init_summ_dec_state = DecState(rec_vals={"hidden": sub_summary})
-            #     summ_word_ids, \
-            #     summ_coll_vals = self.beamer(init_summ_dec_state,
-            #                                  min_lens=min_lens,
-            #                                  max_steps=max_rev_len,
-            #                                  att_keys=summ_att_keys,
-            #                                  att_values=summ_att_vals,
-            #                                  att_mask=summ_att_mask,
-            #                                  att_word_ids=summ_att_word_ids,
-            #                                  minimum=1, **kwargs)
-            #     for summary_l, sub_l in zip(summary_id, summ_word_ids):
-            #         summary_l.extend(sub_l)
-            #
-            # for ii in summary_id:
-            #     print(len(ii), 'cehck length -=-=-=-=--')
-
 
             # DECODING OF REVIEWS #
             z_rev_len = T.ones(z_hiddens.size()[0])
             z_rev_len = z_rev_len * z_hiddens.size()[1]
             z, _ = self.model.enc_summary(z_hiddens, z_rev_len)
-
-            # rev_hiddens = T.transpose(rev_hiddens, 2, 1)
-            # z = self.model.AvgPool(rev_hiddens)
-            # z = z.squeeze(-1)
-
-
-
-            # z = self.model.AvgPool(T.transpose(z, 2, 1))
-            # z = z.squeeze(-1)
-
-            # z_decoder = self.model.bart_model.model.decoder(input_ids=revs, encoder_hidden_states=z)
-            # z_latent = z_decoder.last_hidden_state
-            # _, rev_id = self.translate_sentence_beamsearch(z_latent)
 
         ################################################### normal decoder from here ###############################################
 
@@ -339,69 +219,14 @@ class ICopyCat(ITorchModel):
 
         with T.no_grad():
 
-            # # all for bart model
-            # z_output, _ = self.model.get_final_output(rev=revs)
-            # z_latent = z_output.encoder_last_hidden_state
-            # summary_latent = z_latent[group_rev_indxs]
-            # bs = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_z = summary_latent.view(bs, group_size * seq_len, -1)
-            # summary = self.model.get_final_output(input_emb=summary_z, summary=True)
-
-
-            # this is for norml decoder
-            # rev_embds = self.model._embds(revs) * self.model.bart_model.model.encoder.embed_scale
-            # out_put = self.model.bart_model.model.encoder(input_ids=revs)
-            # rev_hiddens = out_put.last_hidden_state
-
             rev_embds = self.model._embds(revs)
             rev_encs, rev_hiddens = self.model.encode(rev_embds, rev_lens)
             # rev_hiddens = self.model.encode(rev_embds, revs_mask)
 
             summary_latent = rev_encs[group_rev_indxs]
-            # bs_summary = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_z = summary_latent.reshape(bs_summary, group_size * seq_len, -1)
-            # summary_z = T.transpose(summary_z, 2, 1)
+          
             summary_z = T.transpose(summary_latent, 2, 1)
             summary, _, _, _, _, collect_z = self.model.get_z(summary_z)
-
-
-            # rev_code = T.transpose(rev_hiddens, 2, 1)
-            # z, _, _, _, _, _ = self.model.get_z(rev_code)
-            # # z, _ = self.model.z_atten(z)
-            # # z = z.unsqueeze(1)
-            # summary_latent = z[group_rev_indxs]
-            # bs_summary = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_z = summary_latent.reshape(bs_summary, group_size * seq_len, -1)
-            # summary_z = T.transpose(summary_z, 2, 1)
-            # summary, _, _, _, _, collect_z = self.model.get_z(summary_z)
-
-
-            # z_output, _, first_rev_hiddens = self.model.get_final_output(rev=revs)
-            # rev_hiddens = z_output.encoder_last_hidden_state
-            # summary_latent = rev_hiddens[group_rev_indxs]
-            # bs_summary = summary_latent.size()[0]
-            # group_size = summary_latent.size()[1]
-            # seq_len = summary_latent.size()[2]
-            # summary_z = summary_latent.view(bs_summary, group_size * seq_len, -1)
-            # summary = self.model.get_final_output(input_emb=summary_z, summary=True)
-
-            # final_rev_len = T.ones(summary.size()[0])
-            # final_rev_len = final_rev_len * summary.size()[1]
-            # summary, _ = self.model.enc_summary(summary, final_rev_len)
-
-            # summary, _ = self.model.z_atten(summary)
-            # decode_output = self.model.bart_model.model.decoder(inputs_embeds=summary)
-            # summary = decode_output.last_hidden_state
-
-            # summary = T.transpose(summary, 2, 1)
-            # summary = self.model.AvgPool(summary)
-            # summary = summary.squeeze(-1)
 
 
             ################################################### normal decoder from here ###############################################
