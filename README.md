@@ -2,9 +2,7 @@
 
 ## Introduction
 
-HEAD
 We developed THVAE, an **unsupervised** timline summarization model based on hierarchical VAE 
-=======
 
 ## Train
 The main model is in [file](https://github.com/Maria-Liakata-NLP-Group/THVAE-summary/blob/main/copycat/modelling/thvae.py), it shows the process of how to use hierarchical VAE to get the latent code of each segment of a timeline.
