@@ -34,13 +34,10 @@ OPS = OrderedDict([
 
 def get_skip_connection(C, stride, affine, channel_mult):
     if stride == 1:
-        # 不区分参数的占位符标识运算符。其实意思就是这个网络层的设计是用于占位的，即不干活，
-        # 只是有这么一个层，放到残差网络里就是在跳过连接的地方用这个层，显得没有那么空虚！
         return Identity()
     elif stride == 2:
         return FactorizedReduce(C, int(channel_mult * C))
     elif stride == -1:
-        # return nn.Sequential(UpSample(), Conv1D(C, int(C / channel_mult), kernel_size=1))
         return Conv1D(C, int(C / channel_mult), kernel_size=1)
 
 
@@ -203,16 +200,11 @@ class BNSwishConv(nn.Module):
 
     def __init__(self, C_in, C_out, kernel_size, stride=1, padding=0, dilation=1):
         super(BNSwishConv, self).__init__()
-        # self.upsample = stride == -1 文本不用执行上采样或者下采样
         self.upsample = 0
         stride = abs(stride)
         self.bn = get_batchnorm(C_in, eps=BN_EPS, momentum=0.05)
         # self.bn_act = SyncBatchNormSwish(C_in, eps=BN_EPS, momentum=0.05)
         self.conv_0 = Conv1D(C_in, C_out, kernel_size, stride=stride, padding=padding, bias=True, dilation=dilation)
-        # self.conv_list = []
-        # for kernel, feature in zip(kernel_size, C_out):
-        #     self.conv_0 = Conv1D(C_in, feature, kernel, stride=stride, padding=padding, bias=True, dilation=dilation)
-        #     self.conv_list.append(self.conv_0)
 
     def forward(self, x):
         """
@@ -226,11 +218,6 @@ class BNSwishConv(nn.Module):
         if self.upsample:
             out = F.interpolate(out, scale_factor=2, mode='nearest')
         out = self.conv_0(out)
-        # for conv in self.conv_list:
-        #     s = conv(out)
-        #     out_list.append(s)
-        #     print(s.size(),'out ----------------')
-        # out = torch.cat(out_list, dim=1)
         return out
 
 
@@ -239,28 +226,13 @@ class FactorizedReduce(nn.Module):
     def __init__(self, C_in, C_out):
         super(FactorizedReduce, self).__init__()
         assert C_out % 2 == 0
-        # self.conv_1 = Conv1D(C_in, C_out, 1, stride=2, padding=0, bias=True)
         self.conv_1 = Conv1D(C_in, C_out // 2, 2, stride=2, padding=0, bias=True)
         self.conv_2 = Conv1D(C_in, C_out - 1 * (C_out // 2), 3, stride=2, padding=1, bias=True)
-        # self.conv_2 = Conv1D(C_in, C_out // 4, 1, stride=4, padding=0, bias=True)
-        # self.conv_3 = Conv1D(C_in, C_out // 4, 1, stride=4, padding=0, bias=True)
-        # self.conv_4 = Conv1D(C_in, C_out - 3 * (C_out // 4), 1, stride=4, padding=0, bias=True)
 
     def forward(self, x):
         out = act(x)
         conv1 = self.conv_1(out)
-        # print(conv1.size(), 'conv1 -=-=-=-=-=-=-==')
-        # adaptive = nn.AdaptiveMaxPool1d(conv1.size()[-1])
-        # out = adaptive(out)
         conv2 = self.conv_2(out[:, :, 1:])
-        # print(conv2.size(), 'cobv2 ---===========')
-        # conv2 = adaptive(conv2)
-        # conv3 = self.conv_3(out[:, :, 2:])
-        # conv3 = adaptive(conv3)
-        # conv4 = self.conv_4(out[:, :, 3:])
-        # conv4 = adaptive(conv4)
-        # out = torch.cat([conv1, conv2, conv3, conv4], dim=1)
-        # print(out.size(), 'ou 0-0-0-0-0-0-0-0-0-0-0')
         out = torch.cat([conv1, conv2], dim=1)
 
         return out
