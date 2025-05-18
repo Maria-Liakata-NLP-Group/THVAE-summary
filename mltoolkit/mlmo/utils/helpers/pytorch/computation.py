@@ -15,7 +15,7 @@ def masked_softmax(scores, mask=None, dim=-1):
     :param dim: over which dimension to perform normalization.
     :return: normalized scores
     """
-    scores[mask == 0.] = np.float('-inf')
+    scores[mask == 0.] = float('-inf')
     probs = softmax(scores, dim=dim)
     return probs
 
