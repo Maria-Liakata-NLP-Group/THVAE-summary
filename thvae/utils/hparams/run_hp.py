@@ -10,7 +10,7 @@ from mltoolkit.mlmo.utils.helpers.analytics import ngram_seq_analysis
 class RunHP(BaseHP):
     """Contains configuration parameters for running the model."""
 
-    def __init__(self):
+    def __init__(self, root_path="thvae"):
         super(RunHP, self).__init__()
 
         self.experiments_descr = 'My first experiment with the model.'
@@ -40,31 +40,31 @@ class RunHP(BaseHP):
         self.gener_early_term = 2
 
         #  GENERAL PATHS   #
-        self.root_path = 'thvae'
+        self.root_path = root_path
         self.experiments_folder = 'first_run'
         self.output_dir = f'{self.root_path}/runs/{self.dataset}/{self.experiments_folder}'
         self.checkpoint_full_fn = 'checkpoint.tar'
         epc = ExperimentsPathController()
         self.output_path = epc(self.output_dir)
         self.checkpoint_path = ''
-        self.tcaser_model_path = 'data/dataset_name/tcaser.model'
+        self.tcaser_model_path = f'{self.root_path}/data/dataset_name/tcaser.model'
 
         #   DATA PATHS  #
-        self.train_fp = "data/amazon/reddit_prompt/train"
-        self.val_fp = "data/amazon/reddit_prompt/val"
-        self.words_vocab_fp = 'data/dataset_name/vocabs/vocab.txt'
-        self.eval_dev_fp = "data/amazon/gold_8/val.csv"
-        self.eval_test_fp = "data/amazon/gold_8/test.csv"
-        self.gen_fp1 = 'Timeline_dataset/timeline_test1'
-        self.gen_fp2 = 'Timeline_dataset/timeline_test2'
-        self.gen_fp = 'Timeline_dataset/timeline_test'
-        self.gen_fp_add = 'Timeline_dataset/timeline_test_add'
-        self.gen_fp3 = 'Timeline_dataset/timeline_test3'
-        self.gen_fp4 = 'Timeline_dataset/timeline_test4'
-        self.gen_fp5 = 'Timeline_dataset/timeline_test5'
-        self.gen_fp6 = 'Timeline_dataset/timeline_test6'
-        self.gen_fp7 = 'Timeline_dataset/timeline_test7'
-        self.gen_add4 = 'Timeline_dataset/timeline_add_4'
+        self.train_fp = f'{self.root_path}/data/amazon/reddit_prompt/train'
+        self.val_fp = f'{self.root_path}/data/amazon/reddit_prompt/val'
+        self.words_vocab_fp = f'{self.root_path}/data/dataset_name/vocabs/vocab.txt'
+        self.eval_dev_fp = f'{self.root_path}/data/amazon/gold_8/val.csv'
+        self.eval_test_fp = f'{self.root_path}/data/amazon/gold_8/test.csv'
+        self.gen_fp1 = f'{self.root_path}/Timeline_dataset/timeline_test1'
+        self.gen_fp2 = f'{self.root_path}/Timeline_dataset/timeline_test2'
+        self.gen_fp = f'{self.root_path}/Timeline_dataset/timeline_test'
+        self.gen_fp_add = f'{self.root_path}/Timeline_dataset/timeline_test_add'
+        self.gen_fp3 = f'{self.root_path}/Timeline_dataset/timeline_test3'
+        self.gen_fp4 = f'{self.root_path}/Timeline_dataset/timeline_test4'
+        self.gen_fp5 = f'{self.root_path}/Timeline_dataset/timeline_test5'
+        self.gen_fp6 = f'{self.root_path}/Timeline_dataset/timeline_test6'
+        self.gen_fp7 = f'{self.root_path}/Timeline_dataset/timeline_test7'
+        self.gen_add4 = f'{self.root_path}/Timeline_dataset/timeline_add_4'
 
         #   ANNEALING   #
         self.c_m = 8.

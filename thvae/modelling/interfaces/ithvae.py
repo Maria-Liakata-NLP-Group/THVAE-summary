@@ -218,28 +218,16 @@ class IThVAE(ITorchModel):
         summs_nr = group_rev_indxs.size(0)
 
         with T.no_grad():
-<<<<<<< HEAD:copycat/modelling/interfaces/ithvae.py
-=======
             # this is for norml decoder
->>>>>>> d3e98a5 (change name):thvae/modelling/interfaces/ithvae.py
 
             rev_embds = self.model._embds(revs)
             rev_encs, rev_hiddens = self.model.encode(rev_embds, rev_lens)
 
             summary_latent = rev_encs[group_rev_indxs]
-<<<<<<< HEAD:copycat/modelling/interfaces/ithvae.py
-          
-=======
->>>>>>> d3e98a5 (change name):thvae/modelling/interfaces/ithvae.py
             summary_z = T.transpose(summary_latent, 2, 1)
             summary, _, _, _, _, collect_z = self.model.get_z(summary_z)
 
 
-<<<<<<< HEAD:copycat/modelling/interfaces/ithvae.py
-            ################################################### normal decoder from here ###############################################
-
-=======
->>>>>>> d3e98a5 (change name):thvae/modelling/interfaces/ithvae.py
             att_keys = self.model.create_att_keys(rev_hiddens)
             # contxt_states = self.model.get_contxt_states(rev_hiddens, rev_embds)
 
