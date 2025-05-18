@@ -210,7 +210,7 @@ class ThVAE(Module):
         """
         assert vocab_size <= ext_vocab_size
 
-        super(CopyCat, self).__init__()
+        super(ThVAE, self).__init__()
         # self.bart_model = BartForConditionalGeneration.from_pretrained('facebook/bart-base')
         self.bart_model = BartForCausalLM.from_pretrained("facebook/bart-base", add_cross_attention=False)
         self.tokenizer = BartTokenizer.from_pretrained('facebook/bart-base')

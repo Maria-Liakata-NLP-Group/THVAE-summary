@@ -22,7 +22,7 @@ class IThVAE(ITorchModel):
         :param beamer: beam search object for sequence generation.
         :param min_gen_seq_len: minimum length of generated reviews and summaries.
         """
-        super(ICopyCat, self).__init__(**kwargs)
+        super(IThVAE, self).__init__(**kwargs)
         self.beamer = beamer
         self.min_sen_seq_len = min_gen_seq_len
 

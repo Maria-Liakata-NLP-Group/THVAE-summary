@@ -32,7 +32,7 @@ class IDevThVAE(BaseIDev):
                  tok_func, detok_func, sent_split_func, **kwargs):
         assert isinstance(c_kl_ann, (KlMonAnnealing, KlCycAnnealing))
         assert isinstance(z_kl_ann, (KlMonAnnealing, KlCycAnnealing))
-        super(IDevCopyCat, self).__init__(**kwargs)
+        super(IDevThVAE, self).__init__(**kwargs)
         self.c_kl_ann = c_kl_ann
         self.z_kl_ann = z_kl_ann
         self.word_vocab = word_vocab
