@@ -27,6 +27,7 @@ def compute_lens(fvalues, tokenizer, dtype='int64'):
     lens = np.zeros((len(fvalues),), dtype=dtype)
     for indx, fv in enumerate(fvalues):
         if isinstance(fv, list):
+            fv = [str(x) for x in fv]
             sen_str = ' '.join(fv)
             split_text = tokenizer._tokenize(sen_str)
             # lens[indx] = len(fv)
