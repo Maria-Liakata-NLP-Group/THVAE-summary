@@ -9,7 +9,7 @@ from thvae.data_pipelines.steps import ReviewFlattener,\
 from thvae.utils.fields import ModelF, InfDataF
 
 
-def assemble_infer_pipeline(word_vocab, max_groups_per_chunk=1, max_reviews=10,
+def assemble_infer_pipeline(word_vocab, bart_tokenizer, max_groups_per_chunk=1, max_reviews=10,
                             tokenization_func=lambda x: x.split()):
     """Assembles a simple inference pipeline for summary generation. Assumes
     that csv files are read where reviews have the following column names:
@@ -41,7 +41,7 @@ def assemble_infer_pipeline(word_vocab, max_groups_per_chunk=1, max_reviews=10,
     seq_wrapper = SeqWrapper(ModelF.REV, start_el=word_vocab[START].id,
                              end_el=word_vocab[END].id)
 
-    seq_len_computer = SeqLenComputer(ModelF.REV, ModelF.REV_LEN)
+    seq_len_computer = SeqLenComputer(ModelF.REV, ModelF.REV_LEN, bart_tokenizer)
 
     padder = Padder(fname=ModelF.REV, new_mask_fname=ModelF.REV_MASK,
                     pad_symbol=word_vocab[PAD].id, padding_mode='right')
