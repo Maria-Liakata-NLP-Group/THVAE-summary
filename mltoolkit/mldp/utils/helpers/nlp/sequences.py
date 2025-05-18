@@ -30,16 +30,23 @@ def pad_sequences(sequences, pad_symbol, max_length=None,
     if max_length == 0:
         raise ValueError("Can't pad empty sequences.")
 
+    print(f"Max length: {max_length}")
     for sequence in sequences:
         if not isinstance(sequence, (list, np.ndarray)):
             raise ValueError("All sequences must be lists or 1D numpy arrays.")
 
+        print(f"Sequence length: {len(sequence)}")
+
         x, m = pad_sequence(sequence, pad_symbol, max_length=max_length,
                             mask_present_symbol=mask_present_symbol,
                             padding_mode=padding_mode)
+        
+        print(f"Padded sequence length: {len(x)}")
         padded_sentences.append(x)
         masks.append(m)
-    return np.array(padded_sentences), np.array(masks, dtype="float32")
+    padded_sentences = np.array(padded_sentences)
+    masks = np.array(masks)
+    return padded_sentences, masks
 
 
 def pad_sequence(sequence, pad_symbol, max_length,
@@ -89,8 +96,8 @@ def pad_sequence(sequence, pad_symbol, max_length,
         if pad_number % 2 == 1:
             nr_right_pads += 1
 
-    # sequence = pad(sequence, pad_symbol, nr_left_pads=nr_left_pads,
-    #                nr_right_pads=nr_right_pads)
+    sequence = pad(sequence, pad_symbol, nr_left_pads=nr_left_pads,
+                   nr_right_pads=nr_right_pads)
     mask = pad(mask, 0.0, nr_left_pads=nr_left_pads,
                nr_right_pads=nr_right_pads)
 
